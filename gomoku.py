@@ -49,8 +49,8 @@ class Button:
                         print("Start the game again")
            
 
-button = Button(50, 750, 200, 50, "person VS person", (135, 80, 10), (115, 60, 0), (255, 255, 255))
-button_computer = Button(280, 750, 230, 50, "person VS computer", (135, 80, 10), (115, 60, 0), (255, 255, 255))
+button = Button(25, 775, 200, 50, "person VS person", (135, 80, 10), (115, 60, 0), (255, 255, 255))
+button_computer = Button(255, 775, 230, 50, "person VS computer", (135, 80, 10), (115, 60, 0), (255, 255, 255))
 game = Game(screen, button, button_computer)
 
 
