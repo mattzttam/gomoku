@@ -1,3 +1,4 @@
+#It only works on iTerm
 import curses
 import signal
 import sys
