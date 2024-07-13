@@ -18,17 +18,17 @@ def init_player_board(c, l):
         all_ls.append(line_ls)
     return all_ls
 
-def mine_rand(board):
-    l = random.randint(0, 24)#TODO
-    n = random.randint(0, 24)#TODO
+def mine_rand(board, col, lin):
+    l = random.randint(0, col - 1)
+    n = random.randint(0, lin - 1)
     if board[l][n] == '*':
-        mine_rand(board)
+        mine_rand(board, col, lin)
     else:
         board[l][n] = '*'
 
 def set_mine(num, board):
     for i in range(num):
-        mine_rand(board)
+        mine_rand(board, col, lin)
 
 def set_number(board, col, lin):
     for i in range(len(board)):
@@ -67,13 +67,4 @@ def set_number(board, col, lin):
             #TODO
             board[i][j] = count
 
-col = 25
-lin = 25
-mine_num = 10
 
-
-board = init_board(col, lin)
-player_board = init_player_board(col, lin)
-set_mine(mine_num, board)
-set_number(board, col, lin)
-print(board)
