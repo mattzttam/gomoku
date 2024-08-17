@@ -31,11 +31,11 @@ class Game:
             pygame.draw.circle(screen, "#000000", [25 + 50 * 7, 25 + 50 * 7], 8) 
                 
         x, y = pygame.mouse.get_pos()
-        if x >= border_left and x <= border_right and y >= border_top and y <= border_bottom:
+        if y <= (border_bottom + 25):
             x = round((x - border_left) / width) * width + border_left
             y = round((y - border_top) / height) * height + border_top
     
-        pygame.draw.rect(screen, "#FFFFFF", [x - 25, y - 25, 50, 50], 2)
+            pygame.draw.rect(screen, "#FFFFFF", [x - 25, y - 25, 50, 50], 2)
         
         self.button.draw(screen)
         self.button_computer.draw(screen)
@@ -55,110 +55,76 @@ class Game:
                 color = (255, 255, 255)
             msg_font = pygame.font.Font(None, 70)
             msg_surf = msg_font.render(msg, 1, color)
-            screen.blit(msg_surf, [180, 100])
+            screen.blit(msg_surf, [485, 775])
             pygame.display.flip()
             #pygame.time.delay(3000)
-            button.clicked = False
-                    
+            self.button.clicked = False
+
+    def horizental_next(self, x, y, offset):
+        return ( x + offset, y )
+    def vertical_next(self, x, y, offset):
+        return ( x , y + offset )
+    def incremental_next(self, x, y, offset):
+        return ( x + offset, y - offset )
+    def decrease_next(self, x, y, offset):
+        return ( x + offset, y + offset )
+
+    def inside_board(self, x, y):
+        return x > 0 and x < 15 and y > 0 and y < 15
+
+    def checkSingle(self, row, column, next_coord, player):
+        score = 1
+        for i in range(4):
+            t= next_coord(column, row, i)
+            x = t[0]
+            y = t[1]
+            t1 = next_coord(x, y, 1)
+            x1 = t1[0]
+            y1 = t1[1]
+            if self.inside_board(x, y) and self.inside_board(x1, y1):
+                if self.map[y][x] == self.map[y1][x1]:
+                    score += 1
+                else:
+                    break
+        for j in range(4):
+            t= next_coord(column, row, -j)
+            x = t[0]
+            y = t[1]
+            t1 = next_coord(x, y, -1)
+            x1 = t1[0]
+            y1 = t1[1]
+            if self.inside_board(x, y) and self.inside_board(x1, y1):
+                if self.map[y][x] == self.map[y1][x1]:
+                    score += 1
+                else:
+                    break
+        if score == 5:
+            return True
+        if player == 2:
+            if score > 5:
+                return True
+
+
     def check(self, row, column, player):
-        score = 1
-        for i in range(4):
-            try:
-                if self.map[row][column + i] == self.map[row][column + i + 1]:
-                    score += 1
-                else:
-                    break
-            except:
-                break
-        for j in range(4):
-            try:
-                if self.map[row][column - j] == self.map[row][column - j - 1]:
-                    score += 1
-                else:
-                    break
-            except:
-                break
-        if score == 5:
-            return True
-        if player == 2:
-            if score > 5:
-                return True
-            
-        score = 1
-        for i in range(4):
-            try:
-                if self.map[row + i][column] == self.map[row + i + 1][column]:
-                    score += 1
-                else:
-                    break
-            except:
-                break
-        for j in range(4):
-            try:
-                if self.map[row - j][column] == self.map[row - j - 1][column]:
-                    score += 1
-                else:
-                    break
-            except:
-                break
-        if score == 5:
-            return True
-        if player == 2:
-            if score > 5:
-                return True
-            
-        score = 1
-        for i in range(4):
-            try:
-                if self.map[row + i][column + i] == self.map[row + i + 1][column + i + 1]:
-                    score += 1
-                else:
-                    break
-            except:
-                break
-        for j in range(4):
-            try:
-                if self.map[row - j][column - j] == self.map[row - j - 1][column - j - 1]:
-                    score += 1
-                else:
-                    break
-            except:
-                break
-        if score == 5:
-            return True
-        if player == 2:
-            if score > 5:
-                return True
-            
-        score = 1
-        for i in range(4):
-            try:
-                if self.map[row - i][column + i] == self.map[row - i - 1][column + i + 1]:
-                    score += 1
-                else:
-                    break
-            except:
-                break
-        for j in range(4):
-            try:
-                if self.map[row + j][column - j] == self.map[row + j + 1][column - j - 1]:
-                    score += 1
-                else:
-                    break
-            except:
-                break
-        if score == 5:
-            return True
-        if player == 2:
-            if score > 5:
-                return True
-            
+        res0 = self.checkSingle(row, column, self.horizental_next, player)
+        if res0 == True:
+            return res0
+        res1 = self.checkSingle(row, column, self.vertical_next, player)
+        if res1 == True:
+            return res1
+        res2 = self.checkSingle(row, column, self.incremental_next, player)
+        if res2 == True:
+            return res2
+        res3 = self.checkSingle(row, column, self.decrease_next, player)
+        if res3 == True:
+            return res3
+
     def mouse_click(self, x, y):
-        if x >= border_left and x <= border_right and y >= border_top and y <= border_bottom:
+        if y <= border_bottom + 25:
             if self.started:
                 column = round((x - 25) / 50)
                 row = round((y - 25) / 50)
-                print(column + 1, row + 1)
+                print(column, row)
                 if self.map[row][column] == 0:
                     self.map[row][column] = self.player
                     if self.check(row, column, self.player):
